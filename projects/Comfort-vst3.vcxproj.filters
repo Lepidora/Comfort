@@ -463,4 +463,10 @@
       <Filter>config</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\Comfort.ico" />
+    <Image Include="..\resources\background.png">
+      <Filter>resources</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

@@ -26,19 +26,19 @@ Comfort::Comfort(const InstanceInfo& info)
   
   mLayoutFunc = [&](IGraphics* pGraphics) {
     pGraphics->AttachCornerResizer(EUIResizerMode::Scale, false);
-    pGraphics->AttachPanelBackground(COLOR_GRAY);
+    pGraphics->AttachBackground(BACKGROUND_FN);
     pGraphics->LoadFont("Roboto-Regular", ROBOTO_FN);
     const IRECT b = pGraphics->GetBounds();
     //pGraphics->AttachControl(new ITextControl(b.GetMidVPadded(50), "Hello iPlug 2!", IText(50)));
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-200).GetVShifted(-100), kPathOnePan));
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-100).GetVShifted(-100), kPathOneGain));
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(0).GetVShifted(-100), kPathOneDelay));
-      
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-200).GetVShifted(20), kPathTwoPan));
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-100).GetVShifted(20), kPathTwoGain));
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(0).GetVShifted(20), kPathTwoDelay));
-      
-    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(200).GetVShifted(-100), kDryWet));
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-100).GetVShifted(20), kPathOnePan));
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(0).GetVShifted(20), kPathOneGain));
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(100).GetVShifted(20), kPathOneDelay));
+
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(-100).GetVShifted(140), kPathTwoPan));
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(0).GetVShifted(140), kPathTwoGain));
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(100).GetVShifted(140), kPathTwoDelay));
+
+    pGraphics->AttachControl(new IVKnobControl(b.GetCentredInside(100).GetHShifted(0).GetVShifted(-150), kDryWet));
       
   };
 #endif
@@ -69,6 +69,14 @@ void Comfort::ProcessBlock(sample** inputs, sample** outputs, int nFrames)
     const int nChans = NOutChansConnected();
   
     for (int s = 0; s < nFrames; s++) {
+
+        if (GetBypassed()) {
+            for (int c = 0; c < nChans; c++) {
+                outputs[c][s] = inputs[c][s];
+            }
+
+            return;
+        }
         
         double sampleTotal = 0.;
         
